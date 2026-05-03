@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سينما مجاناً</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+/* ── THEME VARIABLES ── */
+:root {
+  --bg:#080810; --surface:#0f0f1a; --card:#13131e;
+  --border:#ffffff0e; --text:#efefef; --muted:#666;
+  --accent:#f0c040; --red:#e05c5c;
+  --header-bg:#080810cc;
+  --input-bg:#1a1a28; --input-border:#2a2a3a;
+  --badge-bg:#1e1e2e;
+}
+[data-theme="light"] {
+  --bg:#f4f4f0; --surface:#ececea; --card:#ffffff;
+  --border:#00000010; --text:#111; --muted:#888;
+  --header-bg:#f4f4f0cc;
+  --input-bg:#e8e8e4; --input-border:#ccc;
+  --badge-bg:#e0e0dc;
+}
+
+/* ── RESET ── */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;}
+
+/* ── HEADER ── */
+header{
+  padding:14px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  position:sticky;top:0;background:var(--header-bg);
+  backdrop-filter:blur(20px);z-index:200;
+}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;flex-shrink:0;color:var(--text);}
+.logo span{color:var(--accent);}
+
+/* tabs */
+nav{display:flex;gap:6px;flex-shrink:0;}
+.tab{
+  padding:7px 16px;border-radius:8px;cursor:pointer;
+  font-size:13px;font-weight:700;font-family:'Cairo',sans-serif;
+  border:1px solid var(--border);background:transparent;color:var(--muted);
+  transition:all .2s;white-space:nowrap;
+}
+.tab.active,.tab:hover{background:var(--accent);color:#000;border-color:var(--accent);}
+
+/* search */
+.search-wrap{display:flex;gap:6px;flex:1;max-width:320px;margin-right:auto;}
+[dir="ltr"] .search-wrap{margin-right:0;margin-left:auto;}
+#search-input{
+  flex:1;padding:8px 12px;background:var(--input-bg);
+  border:1px solid var(--input-border);border-radius:8px;
+  color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;
+  outline:none;transition:border .2s;min-width:0;
+}
+#search-input:focus{border-color:var(--accent);}
+.btn-search{
+  padding:8px 14px;background:var(--accent);color:#000;
+  font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;
+  border:none;border-radius:8px;cursor:pointer;flex-shrink:0;
+}
+
+/* controls */
+.controls{display:flex;gap:6px;flex-shrink:0;}
+.ctrl-btn{
+  width:36px;height:36px;border-radius:8px;border:1px solid var(--border);
+  background:var(--badge-bg);color:var(--text);font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;flex-shrink:0;
+}
+.ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── GENRES BAR ── */
+.genres-wrap{
+  padding:12px 24px;border-bottom:1px solid var(--border);
+  display:flex;gap:8px;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.genres-wrap::-webkit-scrollbar{display:none;}
+.genre-chip{
+  padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;
+  font-family:'Cairo',sans-serif;border:1px solid var(--border);
+  background:var(--badge-bg);color:var(--muted);cursor:pointer;
+  white-space:nowrap;transition:all .2s;flex-shrink:0;
+}
+.genre-chip.active,.genre-chip:hover{
+  background:var(--accent);color:#000;border-color:var(--accent);
+}
+
+/* ── MAIN ── */
+main{padding:24px;}
+.section{display:none;}
+.section.active{display:block;}
+.section-label{
+  font-size:11px;font-weight:700;color:var(--accent);
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;
+}
+
+/* grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:14px;
+}
+
+/* card */
+.card{
+  display:block;text-decoration:none;color:inherit;
+  border-radius:12px;overflow:hidden;
+  background:var(--card);border:1px solid var(--border);
+  transition:transform .25s cubic-bezier(.25,.46,.45,.94),box-shadow .25s,border-color .25s;
+  position:relative;
+}
+.card:hover{
+  transform:scale(1.04) translateY(-4px);
+  box-shadow:0 20px 50px #00000055;
+  border-color:var(--accent)55;z-index:2;
+}
+[data-theme="light"] .card:hover{box-shadow:0 20px 50px #00000022;}
+.card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:var(--badge-bg);}
+.card-ph{width:100%;aspect-ratio:2/3;background:var(--badge-bg);display:flex;align-items:center;justify-content:center;font-size:36px;}
+
+/* badges */
+.badge{
+  position:absolute;top:8px;padding:3px 8px;border-radius:6px;
+  font-size:11px;font-weight:700;backdrop-filter:blur(8px);
+}
+.badge-rating{right:8px;background:#000000aa;color:var(--accent);}
+[dir="ltr"] .badge-rating{right:auto;left:8px;}
+.badge-type{left:8px;background:#000000aa;color:#ccc;font-size:10px;}
+[dir="ltr"] .badge-type{left:auto;right:8px;}
+
+.card-info{padding:10px 10px 12px;}
+.card-title{font-size:12px;font-weight:700;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-meta{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;align-items:center;}
+.card-year{font-size:11px;color:var(--muted);}
+.card-genre{font-size:10px;color:var(--accent);background:var(--badge-bg);padding:2px 6px;border-radius:4px;}
+
+/* pagination */
+.pagination{margin-top:28px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+.page-btn{
+  width:34px;height:34px;border-radius:8px;
+  border:1px solid var(--border);background:var(--card);
+  color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;
+  cursor:pointer;transition:all .2s;
+}
+.page-btn.active,.page-btn:hover{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+
+/* loader / error */
+.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 0;gap:14px;color:var(--muted);grid-column:1/-1;}
+.spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;grid-column:1/-1;}
+
+/* ── MOBILE ── */
+@media(max-width:680px){
+  header{padding:10px 14px;gap:8px;}
+  .logo{font-size:22px;}
+  .tab{padding:6px 12px;font-size:12px;}
+  .search-wrap{max-width:none;width:100%;order:10;flex:none;}
+  main{padding:16px 12px;}
+  .genres-wrap{padding:10px 12px;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:10px;}
+  .badge{font-size:10px;padding:2px 6px;}
+}
+@media(max-width:400px){
+  .grid{grid-template-columns:repeat(3,1fr);}
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<header>
+  <div class="logo">FREE CINEMA<span>| سينما مجاناً</span></div>
+
+  <nav>
+    <button class="tab active" id="tab-movies"  onclick="switchTab('movies')">
+      <span data-ar="🎬 أفلام" data-en="🎬 Movies">🎬 أفلام</span>
+    </button>
+    <button class="tab" id="tab-series" onclick="switchTab('series')">
+      <span data-ar="📺 مسلسلات" data-en="📺 Series">📺 مسلسلات</span>
+    </button>
+  </nav>
+
+  <div class="search-wrap">
+    <input id="search-input" type="search" placeholder="ابحث..." onkeydown="if(event.key==='Enter')doSearch()"/>
+    <button class="btn-search" onclick="doSearch()" data-ar="بحث" data-en="Search">بحث</button>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" onclick="toggleLang()" title="Language" id="lang-btn">EN</button>
+    <button class="ctrl-btn" onclick="toggleTheme()" title="Theme" id="theme-btn">☀️</button>
+  </div>
+</header>
+
+<!-- GENRES -->
+<div class="genres-wrap" id="genres-bar"></div>
+
+<main>
+  <div class="section active" id="movies">
+    <p class="section-label" data-ar="أفلام 2026 — الأكثر شعبية" data-en="2026 Movies — Most Popular">أفلام 2026 — الأكثر شعبية</p>
+    <div class="grid" id="movies-grid"></div>
+    <div class="pagination" id="movies-pages"></div>
+  </div>
+
+  <div class="section" id="series">
+    <p class="section-label" data-ar="مسلسلات 2026 — الأكثر شعبية" data-en="2026 Series — Most Popular">مسلسلات 2026 — الأكثر شعبية</p>
+    <div class="grid" id="series-grid"></div>
+    <div class="pagination" id="series-pages"></div>
+  </div>
+
+  <div class="section" id="search-results">
+    <p class="section-label" id="search-label">...</p>
+    <div class="grid" id="search-grid"></div>
+    <div class="pagination" id="search-pages"></div>
+  </div>
+</main>
+
+<script>
+/* ── CONFIG ── */
+const TMDB_KEY = '187c9edd9528b9cd40d59450355bf5be';
+const IMG      = 'https://image.tmdb.org/t/p/w342';
+
+/* ── STATE ── */
+let lang        = localStorage.getItem('cinema_lang') || 'ar';
+let theme       = localStorage.getItem('cinema_theme') || 'dark';
+let activeTab   = 'movies';
+let activeGenre = 0;
+let imdbCache   = {};
+let genreMap    = {};
+
+const MOVIE_GENRES = [
+  {id:28,ar:'أكشن',en:'Action'},{id:12,ar:'مغامرة',en:'Adventure'},
+  {id:16,ar:'رسوم متحركة',en:'Animation'},{id:35,ar:'كوميدي',en:'Comedy'},
+  {id:80,ar:'جريمة',en:'Crime'},{id:18,ar:'دراما',en:'Drama'},
+  {id:14,ar:'فانتازيا',en:'Fantasy'},{id:27,ar:'رعب',en:'Horror'},
+  {id:9648,ar:'غموض',en:'Mystery'},{id:10749,ar:'رومانسي',en:'Romance'},
+  {id:878,ar:'خيال علمي',en:'Sci-Fi'},{id:53,ar:'إثارة',en:'Thriller'},
+  {id:10752,ar:'حرب',en:'War'}
+];
+const TV_GENRES = [
+  {id:10759,ar:'أكشن ومغامرة',en:'Action & Adventure'},{id:16,ar:'رسوم متحركة',en:'Animation'},
+  {id:35,ar:'كوميدي',en:'Comedy'},{id:80,ar:'جريمة',en:'Crime'},
+  {id:99,ar:'وثائقي',en:'Documentary'},{id:18,ar:'دراما',en:'Drama'},
+  {id:10765,ar:'خيال علمي وفانتازيا',en:'Sci-Fi & Fantasy'},
+  {id:9648,ar:'غموض',en:'Mystery'},{id:10768,ar:'حرب وسياسة',en:'War & Politics'}
+];
+
+/* ── HELPERS ── */
+const t = (ar, en) => lang === 'ar' ? ar : en;
+const $ = id => document.getElementById(id);
+
+async function tmdb(endpoint, params={}) {
+  const url = new URL('https://api.themoviedb.org/3' + endpoint);
+  url.searchParams.set('api_key', TMDB_KEY);
+  url.searchParams.set('language', lang === 'ar' ? 'ar' : 'en-US');
+  for(const [k,v] of Object.entries(params)) url.searchParams.set(k,v);
+  const r = await fetch(url);
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
+
+async function getImdbId(id, type) {
+  const ck = type+id;
+  if(imdbCache[ck] !== undefined) return imdbCache[ck];
+  try {
+    const d = await tmdb(`/${type}/${id}/external_ids`);
+    imdbCache[ck] = d.imdb_id || null;
+    return d.imdb_id || null;
+  } catch { imdbCache[ck]=null; return null; }
+}
+
+function genreName(ids) {
+  if(!ids||!ids.length) return '';
+  const g = MOVIE_GENRES.concat(TV_GENRES).find(x=>x.id===ids[0]);
+  return g ? (lang==='ar'?g.ar:g.en) : '';
+}
+
+function formatDate(str) {
+  if(!str) return '';
+  const d = new Date(str);
+  if(isNaN(d)) return str.slice(0,4);
+  return lang==='ar'
+    ? d.toLocaleDateString('ar-SA',{year:'numeric',month:'short',day:'numeric'})
+    : d.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+}
+
+/* ── CARD ── */
+function buildCard(item, imdbId, type) {
+  const link  = imdbId ? `https://www.playimdb.com/title/${imdbId}/` : `https://www.themoviedb.org/${type}/${item.id}`;
+  const title = item.title || item.name || '—';
+  const date  = item.release_date || item.first_air_date || '';
+  const rat   = item.vote_average ? item.vote_average.toFixed(1) : '';
+  const genre = genreName(item.genre_ids);
+  const typeBadge = type==='tv' ? `<div class="badge badge-type">${t('مسلسل','Series')}</div>` : '';
+
+  return `<a class="card" href="${link}" target="_blank" rel="noopener">
+    ${item.poster_path
+      ? `<img src="${IMG}${item.poster_path}" alt="${title}" loading="lazy">`
+      : `<div class="card-ph">🎬</div>`}
+    ${rat ? `<div class="badge badge-rating">⭐ ${rat}</div>` : ''}
+    ${typeBadge}
+    <div class="card-info">
+      <div class="card-title">${title}</div>
+      <div class="card-meta">
+        ${date ? `<span class="card-year">${formatDate(date)}</span>` : ''}
+        ${genre ? `<span class="card-genre">${genre}</span>` : ''}
+      </div>
+    </div>
+  </a>`;
+}
+
+function loader() { return `<div class="loader"><div class="spinner"></div></div>`; }
+
+function renderPages(total, current, fn, cid) {
+  const el=$(cid); el.innerHTML='';
+  const max=Math.min(total,10);
+  for(let i=1;i<=max;i++){
+    const b=document.createElement('button');
+    b.className='page-btn'+(i===current?' active':'');
+    b.textContent=i; b.onclick=()=>fn(i); el.appendChild(b);
+  }
+}
+
+/* ── GENRES BAR ── */
+function renderGenres() {
+  const genres = activeTab==='series' ? TV_GENRES : MOVIE_GENRES;
+  const bar = $('genres-bar');
+  bar.innerHTML = `<button class="genre-chip${activeGenre===0?' active':''}" onclick="selectGenre(0)">
+    ${t('الكل','All')}
+  </button>`;
+  genres.forEach(g => {
+    bar.innerHTML += `<button class="genre-chip${activeGenre===g.id?' active':''}" onclick="selectGenre(${g.id})">
+      ${lang==='ar'?g.ar:g.en}
+    </button>`;
+  });
+}
+
+function selectGenre(id) {
+  activeGenre=id;
+  renderGenres();
+  if(activeTab==='movies') loadMovies(1);
+  else if(activeTab==='series') loadSeries(1);
+}
+
+/* ── MOVIES ── */
+async function loadMovies(pg) {
+  const grid=$('movies-grid');
+  grid.innerHTML=loader();
+  $('movies-pages').innerHTML='';
+  try {
+    const params={primary_release_year:2026,sort_by:'popularity.desc',page:pg};
+    if(activeGenre) params.with_genres=activeGenre;
+    const d = await tmdb('/discover/movie',params);
+    const ids = await Promise.all(d.results.map(m=>getImdbId(m.id,'movie')));
+    grid.innerHTML = d.results.map((m,i)=>buildCard(m,ids[i],'movie')).join('')
+      || `<div class="empty">${t('لا توجد نتائج','No results')}</div>`;
+    renderPages(d.total_pages, pg, loadMovies, 'movies-pages');
+  } catch(e) {
+    grid.innerHTML=`<div class="empty">${t('خطأ في التحميل','Load error')}: ${e.message}</div>`;
+  }
+}
+
+/* ── SERIES ── */
+async function loadSeries(pg) {
+  const grid=$('series-grid');
+  grid.innerHTML=loader();
+  $('series-pages').innerHTML='';
+  try {
+    const params={first_air_date_year:2026,sort_by:'popularity.desc',page:pg};
+    if(activeGenre) params.with_genres=activeGenre;
+    const d = await tmdb('/discover/tv',params);
+    const ids = await Promise.all(d.results.map(s=>getImdbId(s.id,'tv')));
+    grid.innerHTML = d.results.map((s,i)=>buildCard(s,ids[i],'tv')).join('')
+      || `<div class="empty">${t('لا توجد نتائج','No results')}</div>`;
+    renderPages(d.total_pages, pg, loadSeries, 'series-pages');
+  } catch(e) {
+    grid.innerHTML=`<div class="empty">${t('خطأ في التحميل','Load error')}: ${e.message}</div>`;
+  }
+}
+
+/* ── SEARCH ── */
+async function doSearch() {
+  const q=$('search-input').value.trim();
+  if(!q) return;
+  showSection('search-results');
+  $('search-label').textContent = t(`نتائج: "${q}"`, `Results: "${q}"`);
+  const grid=$('search-grid');
+  grid.innerHTML=loader();
+  $('search-pages').innerHTML='';
+  try {
+    const [mv,tv] = await Promise.all([
+      tmdb('/search/movie',{query:q}),
+      tmdb('/search/tv',  {query:q})
+    ]);
+    const combined=[
+      ...mv.results.map(m=>({...m,_t:'movie'})),
+      ...tv.results.map(s=>({...s,_t:'tv'}))
+    ].sort((a,b)=>b.popularity-a.popularity);
+    const ids=await Promise.all(combined.map(x=>getImdbId(x.id,x._t)));
+    grid.innerHTML=combined.length
+      ? combined.map((x,i)=>buildCard(x,ids[i],x._t)).join('')
+      : `<div class="empty">${t('لا توجد نتائج','No results')}</div>`;
+  } catch(e) {
+    grid.innerHTML=`<div class="empty">${t('خطأ','Error')}: ${e.message}</div>`;
+  }
+}
+
+/* ── TABS ── */
+function switchTab(tab) {
+  activeTab=tab; activeGenre=0;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  $('tab-'+tab)?.classList.add('active');
+  showSection(tab);
+  $('search-input').value='';
+  renderGenres();
+  if(tab==='movies') loadMovies(1);
+  if(tab==='series') loadSeries(1);
+}
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+/* ── LANG ── */
+function toggleLang() {
+  lang = lang==='ar' ? 'en' : 'ar';
+  localStorage.setItem('cinema_lang', lang);
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = lang==='ar' ? 'rtl' : 'ltr';
+  $('lang-btn').textContent = lang==='ar' ? 'EN' : 'عر';
+  $('search-input').placeholder = t('ابحث...','Search...');
+  document.querySelector('.btn-search').textContent = t('بحث','Search');
+  // update tab labels
+  document.querySelectorAll('[data-ar]').forEach(el=>{
+    el.textContent = lang==='ar' ? el.dataset.ar : el.dataset.en;
+  });
+  imdbCache={};
+  renderGenres();
+  if(activeTab==='movies') loadMovies(1);
+  else loadSeries(1);
+}
+
+/* ── THEME ── */
+function toggleTheme() {
+  theme = theme==='dark' ? 'light' : 'dark';
+  localStorage.setItem('cinema_theme', theme);
+  document.body.setAttribute('data-theme', theme);
+  $('theme-btn').textContent = theme==='dark' ? '☀️' : '🌙';
+}
+
+/* ── BOOT ── */
+document.body.setAttribute('data-theme', theme);
+document.documentElement.lang = lang;
+document.documentElement.dir  = lang==='ar' ? 'rtl' : 'ltr';
+$('lang-btn').textContent  = lang==='ar' ? 'EN' : 'عر';
+$('theme-btn').textContent = theme==='dark' ? '☀️' : '🌙';
+$('search-input').placeholder = t('ابحث...','Search...');
+renderGenres();
+loadMovies(1);
+</script>
+</body>
+</html>

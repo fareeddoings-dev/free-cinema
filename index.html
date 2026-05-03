@@ -46,8 +46,15 @@ header{
 .logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;flex-shrink:0;color:var(--text);}
 .logo span{color:var(--accent);}
 
-/* tabs */
-nav{display:flex;gap:6px;flex-shrink:0;}
+.btn-speed{
+  padding:7px 16px;border-radius:8px;
+  font-size:13px;font-weight:700;font-family:'Cairo',sans-serif;
+  border:2px solid var(--accent);background:transparent;color:var(--accent);
+  cursor:pointer;white-space:nowrap;text-decoration:none;
+  transition:all .2s;display:inline-flex;align-items:center;gap:6px;
+}
+.btn-speed:hover{background:var(--accent);color:#000;}
+
 .tab{
   padding:7px 16px;border-radius:8px;cursor:pointer;
   font-size:13px;font-weight:700;font-family:'Cairo',sans-serif;
@@ -184,6 +191,11 @@ main{padding:24px;}
 
 <header>
   <div class="logo">FREE CINEMA<span>| سينما مجاناً</span></div>
+
+  <!-- زر تخطي السرعة — ضع الرابط في href -->
+  <a class="btn-speed" href="https://xlmnxp.github.io/ikhd/STC.html" target="_blank" id="speed-btn">
+    ⚡ <span data-ar="تسريع الانترنت" data-en="Bypass Speed">تسريع الانترنت</span>
+  </a>
 
   <nav>
     <button class="tab active" id="tab-movies"  onclick="switchTab('movies')">

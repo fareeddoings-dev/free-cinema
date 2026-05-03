@@ -473,13 +473,19 @@ function toggleTheme() {
   $('theme-btn').textContent = theme==='dark' ? '☀️' : '🌙';
 }
 
-/* ── BOOT ── */
-document.body.setAttribute('data-theme', theme);
+  /* ── BOOT ── */
+lang  = localStorage.getItem('cinema_lang')  || 'ar';
+theme = localStorage.getItem('cinema_theme') || 'dark';
 document.documentElement.lang = lang;
 document.documentElement.dir  = lang==='ar' ? 'rtl' : 'ltr';
+document.querySelectorAll('[data-ar]').forEach(el=>{
+  el.textContent = lang==='ar' ? el.dataset.ar : el.dataset.en;
+});
+document.body.setAttribute('data-theme', theme);
 $('lang-btn').textContent  = lang==='ar' ? 'EN' : 'عر';
 $('theme-btn').textContent = theme==='dark' ? '☀️' : '🌙';
 $('search-input').placeholder = t('ابحث...','Search...');
+document.querySelector('.btn-search').textContent = t('بحث','Search');
 renderGenres();
 loadMovies(1);
 </script>

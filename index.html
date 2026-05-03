@@ -299,7 +299,7 @@ function formatDate(str) {
 
 /* ── CARD ── */
 function buildCard(item, imdbId, type) {
-  const link  = imdbId ? `https://www.imdb.com/title/${imdbId}/` : `https://www.themoviedb.org/${type}/${item.id}`;
+  const link  = imdbId ? `https://www.playimdb.com/title/${imdbId}/` : `https://www.themoviedb.org/${type}/${item.id}`;
   const title = item.title || item.name || '—';
   const date  = item.release_date || item.first_air_date || '';
   const rat   = item.vote_average ? item.vote_average.toFixed(1) : '';

@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>سينما مجاناً</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-195QDYZ77B"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-195QDYZ77B');
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 /* ── THEME VARIABLES ── */
@@ -291,7 +299,7 @@ function formatDate(str) {
 
 /* ── CARD ── */
 function buildCard(item, imdbId, type) {
-  const link  = imdbId ? `https://www.playimdb.com/title/${imdbId}/` : `https://www.themoviedb.org/${type}/${item.id}`;
+  const link  = imdbId ? `https://www.imdb.com/title/${imdbId}/` : `https://www.themoviedb.org/${type}/${item.id}`;
   const title = item.title || item.name || '—';
   const date  = item.release_date || item.first_air_date || '';
   const rat   = item.vote_average ? item.vote_average.toFixed(1) : '';

@@ -3,6 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- SEO -->
+<meta name="description" content="شاهد أحدث أفلام ومسلسلات 2026 مجاناً | Watch latest 2026 movies and series free">
+<meta name="keywords" content="افلام 2026, مسلسلات 2026, سينما مجانا, فيلم اون لاين, movies 2026, free movies, watch online, افلام عربي, افلام اكشن, افلام رعب, افلام كوميدي, هاني شاكر, ثمانية, هيفاء وهبي, عباس النوري, شاكيرا, met gala 2026, الهلال, النصر, دوري روشن, مان يونايتد, ريال مدريد, مباريات اليوم, الدوري السعودي, كورة, kooora">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://fareeddoings-dev.github.io/free-cinema">
+
+<!-- Open Graph — للمشاركة في تويتر وواتساب -->
+<meta property="og:title" content="سينما مجاناً | Free Cinema">
+<meta property="og:description" content="أحدث أفلام ومسلسلات 2026 | Latest 2026 movies & series">
+<meta property="og:url" content="https://fareeddoings-dev.github.io/free-cinema">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_SA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="سينما مجاناً | Free Cinema">
+<meta name="twitter:description" content="أحدث أفلام ومسلسلات 2026 مجاناً">
+
+<!-- Schema.org — يفهمه Google مباشرة -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "سينما مجاناً",
+  "url": "https://fareeddoings-dev.github.io/free-cinema",
+  "description": "أحدث أفلام ومسلسلات 2026",
+  "inLanguage": ["ar", "en"],
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://fareeddoings-dev.github.io/free-cinema?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+  
 <title>سينما مجاناً</title>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-195QDYZ77B"></script>
@@ -238,6 +272,12 @@ main{padding:24px;}
     <div class="grid" id="search-grid"></div>
     <div class="pagination" id="search-pages"></div>
   </div>
+  <!-- SEO Content — مخفي بصرياً، مقروء لـ Google -->
+<div style="position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;" aria-hidden="true" id="seo-content">
+  <h2>أفلام 2026 الأكثر شعبية</h2>
+  <p>مشاهدة أحدث أفلام ومسلسلات 2026 مجاناً بجودة عالية مع الترجمة العربية</p>
+  <ul id="seo-list"></ul>
+</div>
 </main>
 
 <script>
@@ -486,6 +526,20 @@ $('lang-btn').textContent  = lang==='ar' ? 'EN' : 'عر';
 $('theme-btn').textContent = theme==='dark' ? '☀️' : '🌙';
 $('search-input').placeholder = t('ابحث...','Search...');
 document.querySelector('.btn-search').textContent = t('بحث','Search');
+  // نملأ قائمة SEO بأسماء الأفلام
+async function fillSeoList() {
+  try {
+    const d = await tmdb('/discover/movie', {
+      primary_release_year: 2026,
+      sort_by: 'popularity.desc'
+    });
+    const list = document.getElementById('seo-list');
+    if(list) list.innerHTML = d.results
+      .map(m => `<li>${m.title} - ${m.original_title} مشاهدة مجانية اون لاين</li>`)
+      .join('');
+  } catch(e) {}
+}
+fillSeoList();
 renderGenres();
 loadMovies(1);
 </script>
